@@ -12,6 +12,7 @@ import logging
 os.environ["CUDA_VISIBLE_DEVICES"]="1,0"
 
 exp_name = 'celebA'
+start_epoch = 1
 avg_loss = 0.
 avg_output_std = 0.
 epochs = 300
@@ -63,12 +64,18 @@ optimizer = torch.optim.SGD(model.parameters(), lr=1e-0, weight_decay=1e-5)
 # push to device
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = torch.nn.DataParallel(model)
+
+# if resume
+if os.path.exists('../output/{}.pt'.format(exp_name)):
+    model.load_state_dict(torch.load('../output/{}.pt'.format(exp_name), map_location="cpu"))
+    logger.info('Resume model {}'.format(exp_name))
+    
 model.to(device)
 print('Model is initialized and pushed to device')
 logger.info('Model is initialized and pushed to device')
 
 # Train!
-for e in range(epochs):
+for e in range(start_epoch, epochs):
     
     print('Epoch {}'.format(str(e)))
     logger.info('Epoch {}'.format(str(e)))
