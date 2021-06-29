@@ -11,11 +11,11 @@ from tqdm import tqdm
 import logging
 os.environ["CUDA_VISIBLE_DEVICES"]="1,0"
 
-exp_name = 'celebA'
-start_epoch = 1
+exp_name = 'CIFAR10'
+start_epoch = 0
 avg_loss = 0.
 avg_output_std = 0.
-epochs = 300
+epochs = 800
 out_dim = 2048
 input_size = 32
 
@@ -49,11 +49,11 @@ dataloader = torch.utils.data.DataLoader(
 logger.info('Length of data {}'.format(len(dataloader.dataset)))
 
 # use a resnet50 backbone
-resnet = torchvision.models.resnet.resnet50()
+resnet = torchvision.models.resnet.resnet18()
 resnet = torch.nn.Sequential(*list(resnet.children())[:-1])
 
 # build the simsiam model
-model = models.SimSiam(resnet, num_ftrs=2048)
+model = models.SimSiam(resnet, num_ftrs=512)
 
 # use a criterion for self-supervised learning
 criterion = loss.SymNegCosineSimilarityLoss()
